@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -8,9 +11,7 @@ plugins {
 
 android {
     namespace = "com.joselpadi.uala_challenge"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.joselpadi.uala_challenge"
@@ -20,6 +21,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        val localDefaults = Properties()
+        val localDefaultsFile = rootProject.file("local.defaults.properties")
+        if (localDefaultsFile.exists()) {
+            localDefaults.load(FileInputStream(localDefaultsFile))
+        }
+        manifestPlaceholders["MAPS_API_KEY"] = localDefaults["MAPS_API_KEY"]?.toString() ?: ""
     }
 
     buildTypes {
@@ -46,8 +53,14 @@ android {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
+
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
@@ -59,16 +72,17 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    //Retrofit
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
+    implementation(libs.moshi.kotlin)
 
-    // Room runtime
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
-    // Coroutines + Flow support
-    implementation("androidx.room:room-ktx:2.8.4")
+    implementation(libs.javax.inject)
+    implementation(libs.dagger)
+    ksp(libs.dagger.compiler)
 
-    // Compiler con KSP
-    ksp("androidx.room:room-compiler:2.8.4")
 }
