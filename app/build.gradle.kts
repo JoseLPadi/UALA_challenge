@@ -1,32 +1,39 @@
-import java.io.FileInputStream
 import java.util.Properties
+val localProps = Properties().apply {
+    val file = rootProject.file("local.defaults.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+}
 
+
+fun getProperty(name: String, default: String = ""): String {
+    return localProps.getProperty(name, default)
 }
 
 android {
     namespace = "com.joselpadi.uala_challenge"
     compileSdk = 36
 
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
     defaultConfig {
+        buildConfigField("Boolean", "ES_PRODUCCION", "false")
         applicationId = "com.joselpadi.uala_challenge"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        val localDefaults = Properties()
-        val localDefaultsFile = rootProject.file("local.defaults.properties")
-        if (localDefaultsFile.exists()) {
-            localDefaults.load(FileInputStream(localDefaultsFile))
-        }
-        manifestPlaceholders["MAPS_API_KEY"] = localDefaults["MAPS_API_KEY"]?.toString() ?: ""
+        buildConfigField("String", "WEATHER_API_KEY", "\"${getProperty("WEATHER_API_KEY")}\"")
+        manifestPlaceholders["MAPS_API_KEY"] = getProperty("MAPS_API_KEY")
     }
 
     buildTypes {
@@ -38,16 +45,16 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
-    buildFeatures {
-        compose = true
-    }
+
 }
 
 dependencies {
@@ -76,7 +83,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
     implementation(libs.moshi.kotlin)
-
+    implementation(libs.coil.compose)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
@@ -84,5 +91,4 @@ dependencies {
     implementation(libs.javax.inject)
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
-
 }

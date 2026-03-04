@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.joselpadi.uala_challenge.domain.model.City
 import com.joselpadi.uala_challenge.ui.cities.CitiesScreen
@@ -24,18 +25,19 @@ private fun HomeContent(
     mapViewModel: MapViewModel,
     onCitySelectedChangeScreen: (City) -> Unit
 ) {
-    val cityList = listCitiesviewModel.listCities.collectAsState()
-    val citySelected = mapViewModel.citySelected.collectAsState()
+    val cityList by listCitiesviewModel.listCities.collectAsState()
+    val citySelected by mapViewModel.citySelected.collectAsState()
+    val weatherData by mapViewModel.weatherData.collectAsState()
     val weight = if(isPortrait) 1f else 0.6f
     Row (modifier = Modifier.fillMaxSize()){
         Box(modifier=Modifier.weight(weight)) {
             CitiesScreen(
-                cityList.value,
+                cityList,
                 { listCitiesviewModel.onFilter(it) },
                 { city ->
-                    mapViewModel.updateCity(city) // Esto se ejecuta en Portrait
+                    mapViewModel.updateCity(city)
                     if (isPortrait) {
-                        onCitySelectedChangeScreen(city) // Esto se ejecuta en Landscape
+                        onCitySelectedChangeScreen(city)
                     }
                 },
                 { city, favorite -> listCitiesviewModel.onCityFavorite(city, favorite) },
@@ -46,7 +48,7 @@ private fun HomeContent(
         }
         if (!isPortrait) {
             Box(modifier = Modifier.weight(0.4f)) {
-                MapScreen(citySelected.value, modifier = Modifier)
+                MapScreen(citySelected, weatherData,  modifier = Modifier)
             }
         }
     }

@@ -3,7 +3,7 @@ package com.joselpadi.uala_challenge.data.repository
 import com.joselpadi.uala_challenge.data.local.dao.CityDAO
 import com.joselpadi.uala_challenge.data.local.entity.CityEntity
 import com.joselpadi.uala_challenge.data.local.mapper.toDomainList
-import com.joselpadi.uala_challenge.data.remote.api.RetrofitInterfeace
+import com.joselpadi.uala_challenge.data.remote.api.CitiesRetrofitInterfeace
 import com.joselpadi.uala_challenge.data.remote.mapper.toEntityList
 import com.joselpadi.uala_challenge.domain.mapper.toEntity
 import com.joselpadi.uala_challenge.domain.model.City
@@ -17,7 +17,7 @@ import kotlin.collections.map
 
 @Singleton
 class CitiesRepositoryImpl  @Inject constructor(
-    private val api: RetrofitInterfeace,
+    private val api: CitiesRetrofitInterfeace,
     private val dao: CityDAO
 ): CitiesRepositoryInterface  {
 

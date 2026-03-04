@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -40,20 +41,21 @@ fun NavGraphComposable(isPortrait: Boolean, modifier:Modifier = Modifier){
                     .navigationBarsPadding()
             ) {
                 HomeScreen(isPortrait,citiesViewModel, mapViewModel) { city ->
-                    // Navegar pasando el objeto City serializado
+
                     navController.navigate(Destinations.DETAIL_CITY_MAP_ROUTE)
                 }
             }
         }
 
         composable(route = Destinations.DETAIL_CITY_MAP_ROUTE) {
-            val city = mapViewModel.citySelected.collectAsState()
+            val city by mapViewModel.citySelected.collectAsState()
+            val weatherData by mapViewModel.weatherData.collectAsState()
             Box(
                 modifier = Modifier.fillMaxSize()
                     .padding(WindowInsets.statusBars.asPaddingValues())
                     .navigationBarsPadding()
             ) {
-                MapScreen(city.value, Modifier)
+                MapScreen(city, weatherData, Modifier)
             }
         }
     }

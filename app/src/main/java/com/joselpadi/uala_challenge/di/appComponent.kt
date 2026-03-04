@@ -14,6 +14,7 @@ import javax.inject.Singleton
         NetworkModule::class,
         RepositoryModule::class,
         UseCaseModule::class,
+        WeatherUseCaseModule::class,
         ViewModelModule::class]
 )
 interface AppComponent {
